@@ -6,6 +6,7 @@ import multiprocessing
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class DS_hpdaq_adc():
     def __init__(self, savedir, conf, max_sample=100, dis_interval=0):
         self._savedir = savedir
@@ -37,7 +38,7 @@ class DS_hpdaq_adc():
             time.sleep(1)
             time_string = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
             path = os.path.join(self._savedir, time_string)
-        
+
         # make the dir
         os.makedirs(path)
         self._dir = path
@@ -68,13 +69,13 @@ class DS_hpdaq_adc():
 
             # receive valid data, increase ii
             ii = ii + 1
-            
+
             # split channels
             cnt = len(data) // 8
-            ch0 = [(data[i*8] * 0x100 + data[i*8+1] + 0x8000) & 0xffff for i in range(cnt)]
-            ch1 = [(data[i*8+2] * 0x100 + data[i*8+3] + 0x8000) & 0xffff for i in range(cnt)]
-            ch2 = [(data[i*8+4] * 0x100 + data[i*8+5] + 0x8000) & 0xffff for i in range(cnt)]
-            ch3 = [(data[i*8+6] * 0x100 + data[i*8+7] + 0x8000) & 0xffff for i in range(cnt)]
+            ch0 = [(data[i * 8] * 0x100 + data[i * 8 + 1] + 0x8000) & 0xffff for i in range(cnt)]
+            ch1 = [(data[i * 8 + 2] * 0x100 + data[i * 8 + 3] + 0x8000) & 0xffff for i in range(cnt)]
+            ch2 = [(data[i * 8 + 4] * 0x100 + data[i * 8 + 5] + 0x8000) & 0xffff for i in range(cnt)]
+            ch3 = [(data[i * 8 + 6] * 0x100 + data[i * 8 + 7] + 0x8000) & 0xffff for i in range(cnt)]
 
             # display channel data (optional)
             if self._dis_interval > 0 and (not (ii % self._dis_interval)):

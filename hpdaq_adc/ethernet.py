@@ -3,6 +3,7 @@ import time
 import queue
 import multiprocessing
 
+
 class Eth():
     def __init__(self, server_addr, server_port, verbose):
         self.host = server_addr
@@ -42,6 +43,7 @@ class Eth():
     def close(self):
         self.client.close()
 
+
 class Eth_hpdaq_adc(Eth):
     def __init__(self, server_addr, server_port, trigger_depth, soft_trigger=True, timeout=None, verbose=1):
         super(Eth_hpdaq_adc, self).__init__(server_addr, server_port, verbose)
@@ -55,11 +57,11 @@ class Eth_hpdaq_adc(Eth):
 
     def init_hpdaq(self):
         # set trigger mode
-        if self._trigger: # soft trigger
+        if self._trigger:  # soft trigger
             self.send("00220001")
-        else: # hardware trigger
+        else:  # hardware trigger
             self.send("00220000")
-        
+
         # set the start of the ddr storage address
         self.send("00291000")
         self.send("00280000")
@@ -104,7 +106,7 @@ class Eth_hpdaq_adc(Eth):
                     print("80090000 assertion fails")
                     valid = False
                     break
-                if not (data[2] & 0x10): # valid trigger is detected on hpdaq
+                if not (data[2] & 0x10):  # valid trigger is detected on hpdaq
                     valid = True
                     break
             if not valid:

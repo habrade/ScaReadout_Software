@@ -2,14 +2,15 @@ import time
 import json
 import multiprocessing
 import argparse
-import ds
-import ethernet
+from ds import DS_hpdaq_adc
+from ethernet import Eth, Eth_hpdaq_adc
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--save_dir", type=str, required=True, help="where to save the ADC data")
 
-parser.add_argument("--tri_type", type=str, default="soft", choices=["soft", "hard"], help="software trigger or hardware trigger")
+parser.add_argument("--tri_type", type=str, default="soft", choices=["soft", "hard"],
+                    help="software trigger or hardware trigger")
 parser.add_argument("--tri_int", type=float, default=0.1, help="trigger interval for software trigger")
 parser.add_argument("--tri_num", type=int, default=100, help="trigger counts for software trigger")
 parser.add_argument("--tri_dep", type=int, default=2048, help="trigger depth")
@@ -38,18 +39,18 @@ if __name__ == "__main__":
         soft_trigger = True
     else:
         soft_trigger = False
-    
+
     # initialize instances and queues
-    eth_inst = ethernet.Eth_hpdaq_adc(server_addr=a.server_addr, server_port=a.server_port, trigger_depth=a.tri_dep,
-                                      soft_trigger=soft_trigger, timeout=a.timeout, verbose=a.verbose)
-    ds_inst = ds.DS_hpdaq_adc(savedir=a.save_dir, conf=vars(a), max_sample=a.tri_num, dis_interval=a.dis_int)
+    eth_inst = Eth_hpdaq_adc(server_addr=a.server_addr, server_port=a.server_port, trigger_depth=a.tri_dep,
+                             soft_trigger=soft_trigger, timeout=a.timeout, verbose=a.verbose)
+    ds_inst = DS_hpdaq_adc(savedir=a.save_dir, conf=vars(a), max_sample=a.tri_num, dis_interval=a.dis_int)
 
     data_queue = multiprocessing.Queue()
     if soft_trigger:
         trigger_queue = multiprocessing.Queue()
     else:
         trigger_queue = None
-    
+
     # start processes
     eth_proc = multiprocessing.Process(target=eth_inst.run, args=(data_queue, trigger_queue,))
     ds_proc = multiprocessing.Process(target=ds_inst.run, args=(data_queue,))
